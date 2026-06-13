@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edgar-exposure"
+version = "0.1.0"
+description = "Disclosure-derived exposure networks from SEC 10-K filings."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Joe Higgins" }]
+dependencies = [
+    "datasets",
+    "networkx",
+    "pandas",
+]
+
+[project.optional-dependencies]
+viz = ["pygraphviz"]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

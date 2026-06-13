@@ -1,0 +1,14 @@
+# Python dependencies for the edgar_exposure pipeline.
+#
+# NOTE: pygraphviz binds to the system Graphviz library. Install the
+# Graphviz system package BEFORE pip-installing pygraphviz:
+#   - Debian/Ubuntu : sudo apt-get install graphviz graphviz-dev
+#   - macOS (brew)  : brew install graphviz
+#   - Google Colab  : !apt-get -qq install -y graphviz graphviz-dev
+# See README.md for details.
+
+datasets
+networkx
+pygraphviz
+pandas
+pytest

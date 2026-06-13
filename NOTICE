@@ -1,0 +1,31 @@
+graph-theoretic-applications-in-insurance-risk-management
+Copyright (c) 2026 Joe Higgins
+
+The project source code is released under the MIT License (see LICENSE).
+
+This NOTICE file is provided in the spirit of the Apache License 2.0,
+Section 4(d), to give attribution to the third-party data on which this
+research depends. It does not relicense the project code.
+
+-------------------------------------------------------------------------------
+Data attribution
+-------------------------------------------------------------------------------
+
+This project builds upon SEC 10-K filing text distributed as:
+
+  PleIAs/SEC
+  https://huggingface.co/datasets/PleIAs/SEC
+
+The underlying 10-K corpus derives from EDGAR-CORPUS, the work of:
+
+  Lefteris Loukas, Manos Fergadiotis, Ion Androutsopoulos, and
+  Prodromos Malakasiotis.
+  "EDGAR-CORPUS: Billions of Tokens Make The World Go Round."
+  Proceedings of the Third Workshop on Economics and Natural Language
+  Processing (ECONLP), EMNLP 2021.
+  arXiv:2109.14394 — https://arxiv.org/abs/2109.14394
+
+Source filings are public-domain disclosures published by the U.S. Securities
+and Exchange Commission (SEC) via the EDGAR system. Please consult the
+respective dataset cards for the licensing terms that govern reuse of the
+data, and cite the EDGAR-CORPUS paper when using this work in research.
