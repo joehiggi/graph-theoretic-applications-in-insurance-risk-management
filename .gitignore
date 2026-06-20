@@ -25,11 +25,11 @@ htmlcov/
 # Jupyter / Colab
 .ipynb_checkpoints/
 
-# Project data and generated outputs (kept local, not versioned)
-data/*
-!data/.gitkeep
-outputs/*
-!outputs/.gitkeep
+# Project data and generated outputs (keep the folders, ignore their contents)
+data/input/*
+!data/input/.gitkeep
+data/output/*
+!data/output/.gitkeep
 
 # Hugging Face datasets cache
 .cache/

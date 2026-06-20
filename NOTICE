@@ -11,12 +11,12 @@ research depends. It does not relicense the project code.
 Data attribution
 -------------------------------------------------------------------------------
 
-This project builds upon SEC 10-K filing text distributed as:
+This project builds upon SEC 10-K filing text distributed as EDGAR-CORPUS:
 
-  PleIAs/SEC
-  https://huggingface.co/datasets/PleIAs/SEC
+  eloukas/edgar-corpus
+  https://huggingface.co/datasets/eloukas/edgar-corpus
 
-The underlying 10-K corpus derives from EDGAR-CORPUS, the work of:
+EDGAR-CORPUS is the work of:
 
   Lefteris Loukas, Manos Fergadiotis, Ion Androutsopoulos, and
   Prodromos Malakasiotis.
