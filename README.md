@@ -1,137 +1,44 @@
 # Graph-Theoretic Applications in Insurance Risk Management
 
-Building **disclosure-derived exposure networks** from SEC 10-K filings.
+A minimal quick-start for researching **graph-theoretic structure in firm risk disclosures**.
 
-## Project summary
+**Research question.** Can a network-level metric summarise a firm's exposure to risk, and do *network effects* propagate exposure between firms whose SEC disclosures share risk language?
 
-This research project investigates graph-theoretic approaches to insurance
-and investment risk. It mines the narrative risk disclosures in SEC 10-K
-annual reports — distributed as the [`PleIAs/SEC`](https://huggingface.co/datasets/PleIAs/SEC)
-dataset on the Hugging Face Hub — and turns them into **exposure networks**:
-
-* a **bipartite firm-exposure graph**, linking each company to the risk
-  themes (interest-rate risk, cybersecurity, supply chain, climate, ...) it
-  discloses in *Item 1A. Risk Factors*; and
-* a **firm-firm projection**, where companies are connected by the number of
-  exposures they share.
-
-The goal is to test (1) whether an aggregate, network-derived metric can
-describe a firm's exposure to risk, and (2) whether there are network effects
-of shared exposure across firms. Graphs are built with
-[NetworkX](https://networkx.org/) and rendered with
-[Graphviz](https://graphviz.org/).
-
-## Repository layout
+## What's here
 
 ```
-src/edgar_exposure/      # the pipeline, as importable modules
-  loader.py              #   stream filings from PleIAs/SEC
-  sections.py            #   split 10-K text into Item sections
-  graph.py               #   detect exposures and build graphs
-  metrics.py             #   centrality and exposure statistics
-  viz.py                 #   Graphviz rendering
-notebooks/               # Colab-compatible notebook mirroring the pipeline
-tests/                   # offline pytest (tiny fixture, no downloads)
-data/                    # local dataset cache (gitignored)
-outputs/                 # generated graphs/figures (gitignored)
+src/GTAIRM_0.ipynb   the notebook: stream data -> build graph -> metrics -> figure
+data/input/          reserved for local inputs (empty for now)
+data/output/         generated static graphs land here (e.g. risk_factor_network_2018.png)
+docs/methodology.md  how the pipeline works, end to end
 ```
 
-## Dataset & citation
+The notebook [`src/GTAIRM_0.ipynb`](src/GTAIRM_0.ipynb)
 
-Data: **`PleIAs/SEC`** — <https://huggingface.co/datasets/PleIAs/SEC>
+1. **streams** SEC 10-K filings from the Hugging Face Hub (nothing is stored locally),
+2. builds a firm–firm graph from **Risk Factors** (Item 1A) text similarity,
+3. computes centrality as an aggregate exposure metric, and
+4. saves a static network figure to [`data/output/`](data/output).
 
-The underlying 10-K corpus derives from **EDGAR-CORPUS**. Please cite:
+## Data
 
-> Lefteris Loukas, Manos Fergadiotis, Ion Androutsopoulos, and Prodromos
-> Malakasiotis. *EDGAR-CORPUS: Billions of Tokens Make The World Go Round.*
-> Proceedings of the Third Workshop on Economics and Natural Language
-> Processing (ECONLP), EMNLP 2021. arXiv:[2109.14394](https://arxiv.org/abs/2109.14394).
+[**EDGAR-CORPUS**](https://huggingface.co/datasets/eloukas/edgar-corpus) — a peer-reviewed corpus of the full text of every SEC 10-K (1993–2020), segmented into the standard 10-K items (Item 1A Risk Factors, Item 7 MD&A, …).
 
-```bibtex
-@inproceedings{loukas-etal-2021-edgar,
-    title = "{EDGAR}-{CORPUS}: Billions of Tokens Make The World Go Round",
-    author = "Loukas, Lefteris and Fergadiotis, Manos and
-              Androutsopoulos, Ion and Malakasiotis, Prodromos",
-    booktitle = "Proceedings of the Third Workshop on Economics and
-                 Natural Language Processing",
-    year = "2021",
-    publisher = "Association for Computational Linguistics",
-    note = "arXiv:2109.14394",
-}
-```
+> Loukas, Fergadiotis, Androutsopoulos & Malakasiotis (2021). *EDGAR-CORPUS: Billions of Tokens Make The World Go Round.* ECONLP @ EMNLP. [arXiv:2109.14394](https://arxiv.org/abs/2109.14394)
 
-Source filings are public-domain disclosures from the U.S. SEC EDGAR system.
-See [`NOTICE`](NOTICE) for full attribution.
+The original script-based `load_dataset("eloukas/edgar-corpus", "full")` no longer works on modern `datasets`; the notebook reads the Hub's auto-generated **parquet** mirror with `streaming=True` instead, so no full corpus download is needed.
 
-## Setup
+## Run it
 
-### Local
-
-Graphviz is a **system dependency** required by `pygraphviz`. Install it
-*before* the Python packages:
+Open in [Colab](https://colab.research.google.com/github/joehiggi/graph-theoretic-applications-in-insurance-risk-management/blob/main/src/GTAIRM_0.ipynb) (one click, no setup), or locally:
 
 ```bash
-# Debian/Ubuntu
-sudo apt-get install -y graphviz graphviz-dev
-# macOS
-brew install graphviz
-
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-pip install -e .            # makes `edgar_exposure` importable
+pip install datasets huggingface_hub pyarrow scikit-learn networkx pandas matplotlib
+jupyter notebook src/GTAIRM_0.ipynb
 ```
 
-### Google Colab
-
-```python
-# 1. System Graphviz (needed by pygraphviz)
-!apt-get -qq install -y graphviz graphviz-dev
-
-# 2. Python packages
-!pip install -q datasets networkx pygraphviz pandas
-
-# 3. (optional) clone this repo to import the package
-!git clone https://github.com/joehiggi/graph-theoretic-applications-in-insurance-risk-management.git
-%cd graph-theoretic-applications-in-insurance-risk-management
-!pip install -q -e .
-```
-
-Open [`notebooks/edgar_exposure_pipeline.ipynb`](notebooks/edgar_exposure_pipeline.ipynb)
-for an end-to-end walkthrough.
-
-## Usage
-
-```python
-from edgar_exposure.loader import load_filings_list
-from edgar_exposure.graph import build_exposure_graph, project_firm_network
-from edgar_exposure.metrics import firm_centrality, exposure_frequency
-from edgar_exposure.viz import draw_graph
-
-# Pull a small, bounded sample (streams; never downloads the full corpus).
-filings = load_filings_list(limit=200)
-
-# Build the bipartite firm-exposure graph and its firm-firm projection.
-bipartite = build_exposure_graph(filings)
-firms = project_firm_network(bipartite)
-
-# Analyse.
-print(firm_centrality(firms).head())
-print(exposure_frequency(bipartite).head())
-
-# Render with Graphviz.
-draw_graph(bipartite, "outputs/exposure_network.png")
-```
-
-## Tests
-
-The test suite is fully offline — it runs the section splitter and graph
-builder on a tiny hardcoded fixture and never touches the network:
-
-```bash
-pip install pytest
-pytest
-```
+See [`docs/methodology.md`](docs/methodology.md) for the full approach.
 
 ## License
 
-Code: [MIT](LICENSE). Data attribution: [`NOTICE`](NOTICE).
+Code: [MIT](LICENSE). Data attribution and citation: [`NOTICE`](NOTICE).
